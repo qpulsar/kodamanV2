@@ -1,0 +1,43 @@
+{
+    "base_dir": "/Users/emin/PycharmProjects/dts",
+    "host": "0.0.0.0",
+    "port": 9009,
+    "allowed_extensions": [
+        ".py",
+        ".pyw",
+        ".pyc",
+        ".pyd",
+        ".pyo",
+        ".html",
+        ".js",
+        ".css",
+        ".md"
+    ],
+    "excluded_directories": [
+        "__pycache__",
+        "venv",
+        ".venv",
+        "env",
+        ".env",
+        ".git",
+        ".idea",
+        ".vscode",
+        "node_modules",
+        "dist",
+        "build",
+        ".pytest_cache",
+        ".ipynb_checkpoints"
+    ],
+    "excluded_extensions": [
+        ".pyc",
+        ".pyo",
+        ".so",
+        ".dll",
+        ".exe",
+        ".bin",
+        ".dat",
+        ".db",
+        ".sqlite",
+        ".sqlite3"
+    ]
+}

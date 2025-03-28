@@ -1,0 +1,41 @@
+{
+    "window_title": "Teacher Server File Viewer",
+    "connection": {
+        "connect": "Connect",
+        "disconnect": "Disconnect",
+        "status": {
+            "connected": "Connected",
+            "disconnected": "Not Connected",
+            "connecting": "Connecting..."
+        },
+        "tooltips": {
+            "ip": "Server IP address to connect",
+            "port": "Port number to connect",
+            "connect": "Connect to server"
+        },
+        "placeholders": {
+            "ip": "Server IP",
+            "port": "Port"
+        }
+    },
+    "tree": {
+        "header": "Files"
+    },
+    "log_levels": {
+        "error": "ERROR",
+        "warning": "WARNING",
+        "success": "SUCCESS",
+        "info": "INFO"
+    },
+    "messages": {
+        "app_started": "Application started",
+        "file_loaded": "File loaded: {}",
+        "tree_updated": "File tree updated",
+        "server_error": "Server error: {}",
+        "auto_connect_error": "Auto-connect failed: {}"
+    },
+    "ui": {
+        "language": "Select language",
+        "theme": "Select theme"
+    }
+}

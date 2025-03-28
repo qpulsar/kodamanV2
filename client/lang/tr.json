@@ -1,0 +1,41 @@
+{
+    "window_title": "Öğretmen Sunucusu Dosya Görüntüleyici",
+    "connection": {
+        "connect": "Bağlan",
+        "disconnect": "Bağlantıyı Kes",
+        "status": {
+            "connected": "Bağlı",
+            "disconnected": "Bağlantı Yok",
+            "connecting": "Bağlanıyor..."
+        },
+        "tooltips": {
+            "ip": "Bağlanılacak sunucunun IP adresi",
+            "port": "Bağlanılacak port numarası",
+            "connect": "Sunucuya bağlan"
+        },
+        "placeholders": {
+            "ip": "Sunucu IP'si",
+            "port": "Port"
+        }
+    },
+    "tree": {
+        "header": "Dosyalar"
+    },
+    "log_levels": {
+        "error": "HATA",
+        "warning": "UYARI",
+        "success": "BAŞARILI",
+        "info": "BİLGİ"
+    },
+    "messages": {
+        "app_started": "Uygulama başlatıldı",
+        "file_loaded": "Dosya yüklendi: {}",
+        "tree_updated": "Dosya ağacı güncellendi",
+        "server_error": "Sunucu hatası: {}",
+        "auto_connect_error": "Otomatik bağlantı başarısız: {}"
+    },
+    "ui": {
+        "language": "Dil seçin",
+        "theme": "Tema seçin"
+    }
+}

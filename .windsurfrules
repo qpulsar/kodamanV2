@@ -1,0 +1,6 @@
+client server mimarisi kullanılıyor
+server bir klasörün içindeki dosyaları read only olarak paylaşıyor
+client o klasördeki dosyaları okuyor
+pyQT ile arayüz yazılacak
+Minimum değişiklik yap
+İstenen değişiklik ile doğrudan ilgisi olmayan yerlerde değişiklik yapma
