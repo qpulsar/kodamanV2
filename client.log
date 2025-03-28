@@ -5391,3 +5391,8 @@
 2025-03-27 21:42:27,168 - FileClient - INFO - Mesaj dinleme sonlandı
 2025-03-27 21:42:27,168 - FileClient.GUI - WARNING - Bağlantı koptu
 2025-03-27 21:42:27,184 - FileClient.GUI - WARNING - Sunucu bağlantısı kesildi
+2025-03-28 10:38:18,166 - FileClient.Preferences - INFO - Tercihler yüklendi
+2025-03-28 10:38:18,171 - Kodaman.Launcher - INFO - Kodaman Başlatıcı arayüzü hazırlandı
+2025-03-28 10:38:22,850 - Kodaman.Launcher - INFO - Sunucu modu seçildi
+2025-03-28 10:38:22,851 - FileClient.Preferences - INFO - Tercihler kaydedildi
+2025-03-28 10:38:22,874 - Kodaman.Launcher - INFO - Sunucu başlatılıyor...

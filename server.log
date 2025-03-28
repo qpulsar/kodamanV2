@@ -3466,3 +3466,37 @@
 2025-03-27 16:33:47,301 - FileServer - INFO - Dosya ağacı gönderildi: ('127.0.0.1', 60016)
 2025-03-27 16:34:22,189 - FileServer - INFO - [-] Bağlantı kapandı: ('127.0.0.1', 60016)
 2025-03-27 16:34:22,190 - FileServer - INFO - [-] Bağlantı kapatıldı: ('127.0.0.1', 60016)
+2025-03-28 10:34:29,526 - FileServer.Settings - INFO - Ayar dosyası bulunamadı, varsayılan ayarlar kullanılıyor: server_settings.json
+2025-03-28 10:35:51,502 - FileServer.Settings - INFO - Ayarlar kaydedildi: server_settings.json
+2025-03-28 10:35:53,544 - FileServer.Browser - INFO - İzin verilen dosya uzantıları güncellendi: ['.txt', '.py', '.java', '.c', '.cpp', '.h', '.hpp', '.cs', '.js', '.html', '.css', '.json', '.xml', '.md', '.csv', '.pdf', '.doc', '.docx', '.xls', '.xlsx', '.ppt', '.pptx', '.jpg', '.jpeg', '.png', '.gif', '.svg', '.mp3', '.mp4', '.wav', '.avi']
+2025-03-28 10:35:53,544 - FileServer.Browser - INFO - Hariç tutulan klasörler güncellendi: ['__pycache__', 'venv', '.venv', 'env', '.env', '.git', '.idea', '.vscode', 'node_modules', 'dist', 'build', '.pytest_cache', '.ipynb_checkpoints']
+2025-03-28 10:35:53,544 - FileServer.Browser - INFO - Hariç tutulan dosya uzantıları güncellendi: ['.pyc', '.pyo', '.so', '.dll', '.exe', '.bin', '.dat', '.db', '.sqlite', '.sqlite3']
+2025-03-28 10:35:53,544 - FileServer - INFO - [SERVER] Başlatılıyor: 10.11.4.20:9009
+2025-03-28 10:35:53,546 - FileServer - INFO - [SERVER] Dinleniyor...
+2025-03-28 10:38:23,010 - FileServer.Settings - INFO - Ayarlar yüklendi: server_settings.json
+2025-03-28 10:38:34,439 - FileServer.Settings - INFO - Ayarlar kaydedildi: server_settings.json
+2025-03-28 10:38:36,994 - FileServer.Browser - INFO - İzin verilen dosya uzantıları güncellendi: ['.txt', '.py', '.java', '.c', '.cpp', '.h', '.hpp', '.cs', '.js', '.html', '.css', '.json', '.xml', '.md', '.csv', '.pdf', '.doc', '.docx', '.xls', '.xlsx', '.ppt', '.pptx', '.jpg', '.jpeg', '.png', '.gif', '.svg', '.mp3', '.mp4', '.wav', '.avi']
+2025-03-28 10:38:36,995 - FileServer.Browser - INFO - Hariç tutulan klasörler güncellendi: ['__pycache__', 'venv', '.venv', 'env', '.env', '.git', '.idea', '.vscode', 'node_modules', 'dist', 'build', '.pytest_cache', '.ipynb_checkpoints']
+2025-03-28 10:38:36,995 - FileServer.Browser - INFO - Hariç tutulan dosya uzantıları güncellendi: ['.pyc', '.pyo', '.so', '.dll', '.exe', '.bin', '.dat', '.db', '.sqlite', '.sqlite3']
+2025-03-28 10:38:36,995 - FileServer - INFO - [SERVER] Başlatılıyor: 10.11.4.20:9009
+2025-03-28 10:38:36,996 - FileServer - INFO - [SERVER] Dinleniyor...
+2025-03-28 10:39:10,505 - FileServer - INFO - [+] Yeni bağlantı: ('10.11.4.20', 55180)
+2025-03-28 10:39:10,506 - FileServer - INFO - Mesaj alındı: ('10.11.4.20', 55180) - get_tree
+2025-03-28 10:39:10,506 - FileServer - DEBUG - Mesaj detayları: {'command': 'get_tree'}
+2025-03-28 10:39:10,506 - FileServer.Browser - INFO - Dosya ağacı oluşturuluyor: /Users/emin/PycharmProjects/Kodaman2
+2025-03-28 10:39:10,507 - FileServer.Browser - DEBUG - Filtrelenen dosya: client.log (uzantı: .log)
+2025-03-28 10:39:10,507 - FileServer.Browser - DEBUG - İzin verilen dosya: kodaman.py
+2025-03-28 10:39:10,507 - FileServer.Browser - DEBUG - Filtrelenen dosya: kodaman.log (uzantı: .log)
+2025-03-28 10:39:10,507 - FileServer.Browser - DEBUG - Filtrelenen dosya: .windsurfrules (uzantı: )
+2025-03-28 10:39:10,507 - FileServer.Browser - DEBUG - İzin verilen dosya: README.md
+2025-03-28 10:39:10,507 - FileServer.Browser - DEBUG - Filtrelenen dosya: gui.log (uzantı: .log)
+2025-03-28 10:39:10,507 - FileServer.Browser - DEBUG - İzin verilen dosya: server_settings.json
+2025-03-28 10:39:10,507 - FileServer.Browser - DEBUG - Filtrelenen dosya: server.log (uzantı: .log)
+2025-03-28 10:39:10,507 - FileServer.Browser - DEBUG - İzin verilen dosya: preferences.json
+2025-03-28 10:39:10,509 - FileServer.Browser - INFO - Dosya ağacı oluşturuldu. Toplam dosya: 33, İzin verilen: 25, Hariç tutulan klasör: 0, Hariç tutulan dosya: 0
+2025-03-28 10:39:10,509 - FileServer.Browser - DEBUG - Ağaç yapısı: {'files': ['kodaman.py', 'README.md', 'server_settings.json', 'preferences.json'], 'children': {'server': {'files': ['server.py', 'kodaman_server.py', '__init__.py', 'file_browser.py', 'server_settings.json', 'settings_manager.py'], 'children': {}}, 'shared': {'files': ['protocol.py', '__init__.py'], 'children': {}}, 'client': {'files': ['css_highlighter.py', 'kodaman_client.py', 'requirements.txt', 'client.py', 'preferences.py', '__init__.py', 'html_higlighter.py', 'python_highlighter.py', 'lan...
+2025-03-28 10:39:10,509 - FileServer - INFO - Dosya ağacı gönderildi: ('10.11.4.20', 55180)
+2025-03-28 10:39:15,933 - FileServer - INFO - [-] Bağlantı kapandı: ('10.11.4.20', 55180)
+2025-03-28 10:39:15,933 - FileServer - INFO - [-] Bağlantı kapatıldı: ('10.11.4.20', 55180)
+2025-03-28 10:39:17,135 - FileServer - INFO - [SERVER] Durdurma isteği alındı
+2025-03-28 10:39:17,136 - FileServer.Settings - INFO - Ayarlar kaydedildi: server_settings.json
