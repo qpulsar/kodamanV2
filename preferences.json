@@ -1,0 +1,13 @@
+{
+    "connection": {
+        "ip": "0.0.0.0",
+        "port": 9009
+    },
+    "ui": {
+        "language": "tr",
+        "theme": "dark_purple.xml"
+    },
+    "app": {
+        "type": "server"
+    }
+}
