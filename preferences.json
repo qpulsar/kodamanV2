@@ -8,6 +8,8 @@
         "theme": "dark_purple.xml"
     },
     "app": {
-        "type": "server"
-    }
+        "type": "client"
+    },
+    "remember_choice": true,
+    "language": "en"
 }
