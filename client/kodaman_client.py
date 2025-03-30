@@ -227,6 +227,25 @@ class NavBar(QWidget):
         self.theme_button.setFixedSize(30, 30)
         self.layout.addWidget(self.theme_button)
         
+        # Font boyutu ayar butonları
+        font_size_container = QWidget()
+        font_size_layout = QHBoxLayout()
+        font_size_layout.setContentsMargins(0, 0, 0, 0)
+        font_size_layout.setSpacing(5)
+        
+        decrease_font = QPushButton("-")
+        decrease_font.setFixedSize(32, 32)
+        decrease_font.clicked.connect(self.decrease_font_size)
+        font_size_layout.addWidget(decrease_font)
+        
+        increase_font = QPushButton("+")
+        increase_font.setFixedSize(32, 32)
+        increase_font.clicked.connect(self.increase_font_size)
+        font_size_layout.addWidget(increase_font)
+        
+        font_size_container.setLayout(font_size_layout)
+        self.layout.addWidget(font_size_container)
+        
         self.setMaximumHeight(50)
         self.setMinimumHeight(50)
         
@@ -389,6 +408,26 @@ class NavBar(QWidget):
         # Bağlantı durumunu güncelle (buton ve durum metni)
         self.set_status(self.connection_status)
 
+    def increase_font_size(self):
+        """Font boyutunu artır"""
+        if self.main_gui:
+            font_size = self.main_gui.preferences.get('font.size', 12)
+            if font_size < 24:  # Maksimum boyut
+                font_size += 2
+                self.main_gui.font_size = font_size  # font_size değişkenini güncelle
+                self.main_gui.preferences.set('font.size', font_size)
+                self.main_gui.update_font_size()
+
+    def decrease_font_size(self):
+        """Font boyutunu azalt"""
+        if self.main_gui:
+            font_size = self.main_gui.preferences.get('font.size', 12)
+            if font_size > 8:  # Minimum boyut
+                font_size -= 2
+                self.main_gui.font_size = font_size  # font_size değişkenini güncelle
+                self.main_gui.preferences.set('font.size', font_size)
+                self.main_gui.update_font_size()
+
 
 class FileBrowserGUI(QMainWindow, QtStyleTools):
     def __init__(self):
@@ -497,6 +536,12 @@ class FileBrowserGUI(QMainWindow, QtStyleTools):
         self.log_area.setReadOnly(True)
         self.log_area.setMaximumHeight(100)
         
+        # Font boyutu tercihi
+        if self.preferences.get('font.size') is None:
+            self.preferences.set('font.size', 12)  # Varsayılan font boyutu
+        
+        self.font_size = self.preferences.get('font.size')
+        
         # Ana layout
         layout = QVBoxLayout()
         layout.addWidget(self.navbar)
@@ -517,6 +562,9 @@ class FileBrowserGUI(QMainWindow, QtStyleTools):
         # GUI oluşturulduktan sonra dili ayarla
         self.lang_manager.set_language(self.preferences.get('ui.language'))
         self._update_all_texts()
+        
+        # Font boyutunu uygula
+        self.update_font_size()
         
         # Log mesajı
         self.log_message("Uygulama başlatıldı", "info")
@@ -861,6 +909,21 @@ class FileBrowserGUI(QMainWindow, QtStyleTools):
         except Exception as e:
             self.log_message(f"Dosya ağacı güncelleme hatası: {str(e)}", "error")
             logger.error(f"Dosya ağacı güncelleme hatası: {str(e)}")
+
+    def update_font_size(self):
+        """Font boyutunu güncelle ve kaydet"""
+        # TextArea için font boyutu
+        font = self.text_area.font()
+        font.setPointSize(self.font_size)
+        self.text_area.setFont(font)
+        
+        # TreeView için font boyutu
+        tree_font = self.tree.font()
+        tree_font.setPointSize(self.font_size)
+        self.tree.setFont(tree_font)
+        
+        # Tercihleri kaydet
+        self.preferences.set('font.size', self.font_size)
 
 
 if __name__ == '__main__':

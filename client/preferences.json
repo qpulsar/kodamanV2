@@ -6,5 +6,8 @@
     "ui": {
         "language": "tr",
         "theme": "dark_teal.xml"
+    },
+    "font": {
+        "size": 16
     }
 }
