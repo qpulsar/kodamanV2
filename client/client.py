@@ -141,6 +141,17 @@ class ClientConnection:
             logger.error(f"Dosya ağacı isteme hatası: {str(e)}")
             raise
 
+    def request_users(self):
+        """
+        Sunucudan aktif kullanıcı listesini ister.
+        """
+        try:
+            logger.info("Kullanıcı listesi isteniyor")
+            self.send(protocol.make_get_users_message())
+        except Exception as e:
+            logger.error(f"Kullanıcı listesi isteme hatası: {str(e)}")
+            raise
+
     def request_file(self, rel_path):
         """Dosya içeriğini iste"""
         try:

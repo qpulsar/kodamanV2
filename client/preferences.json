@@ -1,13 +1,14 @@
 {
     "connection": {
-        "ip": "0.0.0.0",
-        "port": 9009
+        "ip": "192.168.1.13",
+        "port": 9009,
+        "username": "Emin"
     },
     "ui": {
         "language": "tr",
-        "theme": "dark_teal.xml"
+        "theme": "light_amber.xml"
     },
     "font": {
-        "size": 16
+        "size": 20
     }
 }

@@ -4,7 +4,7 @@ import os
 from PyQt5.QtWidgets import QApplication, QMainWindow, QTreeWidget, QTreeWidgetItem, QTextEdit, QVBoxLayout, QWidget, \
     QMessageBox, QHBoxLayout, QLineEdit, QPushButton, QLabel, QFrame, QSplitter, QStyle, QDialog, QListWidget, \
     QListWidgetItem, QDialogButtonBox, QGridLayout, QInputDialog, QComboBox
-from PyQt5.QtCore import QThread, pyqtSignal, Qt
+from PyQt5.QtCore import QThread, pyqtSignal, Qt, QTimer
 from PyQt5.QtGui import QIcon, QFont, QColor
 from qt_material import apply_stylesheet, QtStyleTools, list_themes
 from client import ClientConnection
@@ -105,11 +105,22 @@ class NavBar(QWidget):
         
         self.port_input = QLineEdit(self)
         self.port_input.setPlaceholderText("connection.placeholders.port")  # Will be translated
-        self.port_input.setFixedWidth(80)
         self.port_input.setToolTip("connection.tooltips.port")  # Will be translated
         port_layout.addWidget(self.port_input)
         
         self.layout.addWidget(port_container)
+        
+        # Kullanıcı adı girişi
+        user_container = QWidget()
+        user_layout = QHBoxLayout(user_container)
+        user_layout.setContentsMargins(0, 0, 0, 0)
+        user_layout.setSpacing(5)
+        user_label = QLabel("Name:")
+        user_layout.addWidget(user_label)
+        self.name_input = QLineEdit(self)
+        self.name_input.setPlaceholderText("Kullanıcı adı")
+        user_layout.addWidget(self.name_input)
+        self.layout.addWidget(user_container)
         
         # Ayırıcı çizgi
         separator = QFrame()
@@ -148,7 +159,6 @@ class NavBar(QWidget):
         self.lang_combo = QComboBox(self)
         self.lang_combo.setToolTip("ui.language")  # Will be translated
         self.lang_combo.setFixedWidth(100)
-        
         # ComboBox öğelerinin yüksekliğini azalt
         self.lang_combo.setStyleSheet("""
             QComboBox {
@@ -180,7 +190,7 @@ class NavBar(QWidget):
         # Tema seçim ComboBox'ı
         self.theme_combo = QComboBox(self)
         self.theme_combo.setToolTip("ui.theme")  # Will be translated
-        self.theme_combo.setFixedWidth(120)
+        self.theme_combo.setFixedWidth(100)
         
         # ComboBox öğelerinin yüksekliğini azalt
         self.theme_combo.setStyleSheet("""
@@ -284,9 +294,15 @@ class NavBar(QWidget):
             try:
                 self.set_status("connecting")
                 
-                # IP ve port bilgilerini al
+                # IP, port ve kullanıcı adını al
                 host = self.ip_input.text().strip()
                 port = int(self.port_input.text().strip())
+                username = self.name_input.text().strip()
+                # Tercihleri kaydet
+                if self.main_gui:
+                    self.main_gui.preferences.set('connection.ip', host)
+                    self.main_gui.preferences.set('connection.port', port)
+                    self.main_gui.preferences.set('connection.username', username)
                 
                 # Client'ı günculle
                 self.client.host = host
@@ -295,6 +311,12 @@ class NavBar(QWidget):
                 # Bağlantıyı kur
                 self.client.connect()
                 self.set_status("connected")
+                
+                # Gönder login mesaj
+                # Kullanıcı adını kullanarak login mesajı gönder
+                if username:
+                    from shared import protocol
+                    self.client.send(protocol.make_login_message(username))
                 
                 # Bağlantı başarılı sinyali gönder
                 self.connection_successful.emit()
@@ -354,11 +376,13 @@ class NavBar(QWidget):
             self.update_texts()  # Metinleri güncelle
 
     def _on_theme_selected(self, index):
-        """Tema seçildiğinde çağrılır"""
+        """
+        Tema seçildiğinde çağrılır ve kullanıcı tercihi olarak kaydedilir.
+        """
         theme = self.theme_combo.itemData(index)
         if self.main_gui:
             self.main_gui.current_theme = theme
-            # Tercihleri günculle
+            # Tercihleri güncelle
             self.main_gui.preferences.set('ui.theme', theme)
             self.theme_changed.emit(theme)
 
@@ -369,9 +393,10 @@ class NavBar(QWidget):
             
         prefs = self.main_gui.preferences
         
-        # IP ve port
+        # IP, port ve kullanıcı adı
         self.ip_input.setText(prefs.get('connection.ip'))
         self.port_input.setText(str(prefs.get('connection.port')))
+        self.name_input.setText(prefs.get('connection.username', ''))
         
         # Dil
         lang = prefs.get('ui.language')
@@ -379,7 +404,6 @@ class NavBar(QWidget):
             if self.lang_combo.itemData(i) == lang:
                 self.lang_combo.setCurrentIndex(i)
                 break
-                
         # Tema
         theme = prefs.get('ui.theme')
         for i in range(self.theme_combo.count()):
@@ -442,7 +466,7 @@ class FileBrowserGUI(QMainWindow, QtStyleTools):
         self.lang_manager = LangManager(lang_dir)
         
         self.setWindowTitle("Öğretmen Sunucusu Dosya Görüntüleyici")  # Geçici başlık
-        self.resize(800, 600)
+        self.resize(1000, 600)
         
         # Tema değişkeni
         self.current_theme = self.preferences.get('ui.theme')
@@ -467,8 +491,12 @@ class FileBrowserGUI(QMainWindow, QtStyleTools):
         self.tree.itemClicked.connect(self.on_item_clicked)
         self.tree.setFixedWidth(200)
         
+
+        
         # Tree refresh butonu
-        self.tree_refresh_button = QPushButton("↻")
+        # Tree refresh butonu, yenileme simgesi ile
+        self.tree_refresh_button = QPushButton()
+        self.tree_refresh_button.setIcon(self.style().standardIcon(QStyle.SP_BrowserReload))
         self.tree_refresh_button.setFixedSize(30, 30)
         self.tree_refresh_button.setStyleSheet("""
             QPushButton {
@@ -489,16 +517,9 @@ class FileBrowserGUI(QMainWindow, QtStyleTools):
         tree_button_layout.setContentsMargins(0, 5, 5, 0)
         tree_button_layout.addWidget(self.tree_refresh_button)
         
-        # TreeView öğelerinin yüksekliğini azalt
-        self.tree.setStyleSheet("""
-            QTreeView::item {
-                padding: 1px;
-                min-height: 20px;
-            }
-            QTreeView::branch {
-                padding: 1px;
-            }
-        """)
+        # Dosya ağacı ve layout stilini temaya göre uygula
+        self.apply_tree_theme()
+
         
         self.splitter.addWidget(self.tree)
 
@@ -506,9 +527,16 @@ class FileBrowserGUI(QMainWindow, QtStyleTools):
         self.text_area = QTextEdit()
         self.text_area.setReadOnly(True)
         self.highlighter = PythonHighlighter(self.text_area.document())
+        # Seçim değişince timer başlat, seçim bitince panoya kopyala ve log paneline yaz
+        self.text_area.selectionChanged.connect(self.on_text_area_selection_changed)
+        self._selection_copy_timer = QTimer(self)
+        self._selection_copy_timer.setSingleShot(True)
+        self._selection_copy_timer.timeout.connect(self.copy_selection_if_still_selected)
         
         # Refresh butonu
-        self.refresh_button = QPushButton("↻")
+        # İçerik alanı refresh butonu, yenileme simgesi ile
+        self.refresh_button = QPushButton()
+        self.refresh_button.setIcon(self.style().standardIcon(QStyle.SP_BrowserReload))
         self.refresh_button.setFixedSize(30, 30)
         self.refresh_button.setStyleSheet("""
             QPushButton {
@@ -570,6 +598,50 @@ class FileBrowserGUI(QMainWindow, QtStyleTools):
         self.log_message("Uygulama başlatıldı", "info")
         logger.info("FileBrowserGUI başlatıldı")
 
+        # Dakikada bir otomatik güncelleme başlat
+        self.auto_refresh_timer = QTimer(self)
+        self.auto_refresh_timer.timeout.connect(self.auto_refresh)
+        self.auto_refresh_timer.start(60000)  # 60 saniye
+
+    def auto_refresh(self):
+        """Klasör ve açık dosya içeriğini ve kullanıcı listesini otomatik günceller. Seçili dosya ve scroll korunur."""
+        # Seçili dosya path'i (varsa)
+        selected_item = self.tree.currentItem()
+        selected_path = None
+        if selected_item:
+            selected_path = selected_item.data(0, Qt.UserRole)
+        # TextArea scroll pozisyonu
+        scroll_bar = self.text_area.verticalScrollBar()
+        scroll_value = scroll_bar.value()
+        # Dosya ağacını güncelle
+        self.update_tree_structure()
+        # Dosya seçiliyse tekrar seç
+        if selected_path:
+            self.select_tree_item_by_path(selected_path)
+            # Seçili dosya açıksa içeriğini tekrar iste
+            self.client.request_file(selected_path)
+        # Scroll pozisyonunu geri yükle
+        QTimer.singleShot(200, lambda: scroll_bar.setValue(scroll_value))
+        # Kullanıcı listesini güncelle (sadece bağlantı varsa)
+        if self.navbar.connection_status == "connected":
+            self.client.request_users()
+
+    def select_tree_item_by_path(self, path):
+        """Verilen path'e sahip öğeyi seçer."""
+        def recursive_search(item):
+            for i in range(item.childCount()):
+                child = item.child(i)
+                if child.data(0, Qt.UserRole) == path:
+                    self.tree.setCurrentItem(child)
+                    return True
+                if recursive_search(child):
+                    return True
+            return False
+        root = self.tree.topLevelItem(0)
+        if root:
+            recursive_search(root)
+
+
     def apply_highlighter(self, path, text_edit):
         ext = path.lower().split('.')[-1]
 
@@ -587,6 +659,19 @@ class FileBrowserGUI(QMainWindow, QtStyleTools):
             text_edit.highlighter = CssHighlighter(text_edit.document())
         else:
             text_edit.highlighter = None  # Renklendirme yapılmaz
+
+    def on_text_area_selection_changed(self):
+        """Text area'da seçim değişince timer başlat"""
+        self._selection_copy_timer.start(400)
+
+    def copy_selection_if_still_selected(self):
+        """Seçim hâlâ varsa panoya kopyala ve log paneline yaz"""
+        cursor = self.text_area.textCursor()
+        selected_text = cursor.selectedText()
+        if selected_text:
+            QApplication.clipboard().setText(selected_text)
+            self.log_message("Seçim kopyalandı", "success")
+
 
     def log_message(self, message, level="info"):
         """Log mesajı ekle"""
@@ -623,7 +708,7 @@ class FileBrowserGUI(QMainWindow, QtStyleTools):
         )
 
     def handle_message(self, msg):
-        """Sunucudan gelen mesajları işle"""
+        """Sunucudan gelen mesajları işle. Kullanıcı listesi güncellemesini de destekler."""
         logger.debug(f"Mesaj alındı: {str(msg)[:200]}...")
         
         if msg.get("response") == "tree":
@@ -643,10 +728,16 @@ class FileBrowserGUI(QMainWindow, QtStyleTools):
             self.log_message(f"Dosya yüklendi: {path}", "success")
             logger.info(f"Dosya içeriği gösterildi: {path} ({len(content)} karakter)")
             
+        elif msg.get("response") == "users":
+            # Kullanıcı listesi yanıtı
+            users = msg.get("users", [])
+            logger.info(f"Kullanıcı listesi güncellendi: {users}")
+            
         elif msg.get("response") == "error":
             # Hata yanıtı
             error_msg = msg.get("error", "Bilinmeyen hata")
             self.handle_error(error_msg)
+
 
     def handle_error(self, error_message):
         """Hata mesajlarını işle"""
@@ -686,7 +777,7 @@ class FileBrowserGUI(QMainWindow, QtStyleTools):
             # Kök dizindeki dosyaları ekle
             if "files" in tree_data and isinstance(tree_data["files"], list):
                 logger.debug(f"Kök dizin dosya listesi: {tree_data['files']}")
-                for file_name in tree_data["files"]:
+                for file_name in sorted(tree_data["files"]):
                     file_item = QTreeWidgetItem(parent)
                     file_item.setText(0, file_name)
                     file_item.setIcon(0, self.style().standardIcon(QStyle.SP_FileIcon))
@@ -711,7 +802,7 @@ class FileBrowserGUI(QMainWindow, QtStyleTools):
             # Alt klasörlerdeki dosyaları ekle
             if "files" in tree_data and isinstance(tree_data["files"], list):
                 logger.debug(f"Klasör dosya listesi: {tree_data['files']}")
-                for file_name in tree_data["files"]:
+                for file_name in sorted(tree_data["files"]):
                     file_item = QTreeWidgetItem(parent)
                     file_item.setText(0, file_name)
                     file_item.setIcon(0, self.style().standardIcon(QStyle.SP_FileIcon))
@@ -828,7 +919,8 @@ class FileBrowserGUI(QMainWindow, QtStyleTools):
             }
             self.apply_stylesheet(QApplication.instance(),selected_theme, extra)
 
-        # Tema değişikliği sonrası buton ikonunu güncelle
+        # Tema değişikliği sonrası dosya ağacı ve layout stilini güncelle
+        self.apply_tree_theme()
         self.update_theme_button_icon()
         self.log_message(f"Tema değiştirildi: {self.current_theme}", "info")
 
@@ -887,10 +979,11 @@ class FileBrowserGUI(QMainWindow, QtStyleTools):
         self.apply_stylesheet(QApplication.instance(), theme=theme, invert_secondary=True, extra={
             'density_scale': '-1',
         })
+        self.apply_tree_theme()
         self.update_theme_button_icon()
-        
         # Log mesajı
         #self.log_message(f"Tema değiştirildi: {theme}", "info")
+
 
     def _on_refresh_clicked(self):
         """Refresh butonuna tıklandığında çağrılır"""
@@ -916,14 +1009,41 @@ class FileBrowserGUI(QMainWindow, QtStyleTools):
         font = self.text_area.font()
         font.setPointSize(self.font_size)
         self.text_area.setFont(font)
-        
-        # TreeView için font boyutu
-        tree_font = self.tree.font()
-        tree_font.setPointSize(self.font_size)
-        self.tree.setFont(tree_font)
-        
-        # Tercihleri kaydet
-        self.preferences.set('font.size', self.font_size)
+
+    def apply_tree_theme(self):
+        """
+        QTreeWidget ve bulunduğu layout'un stilini temaya göre uygular.
+        """
+        is_dark = self.current_theme.startswith('dark_')
+        if is_dark:
+            bg = '#232629'
+            border = '#666666'  # Daha belirgin koyu gri
+            fg = '#fff'
+            sel_bg = '#37474f'
+            sel_fg = '#fff'
+        else:
+            bg = '#f8f8f8'
+            border = '#cccccc'  # Açık gri
+            fg = '#222'
+            sel_bg = '#d0eaff'
+            sel_fg = '#222'
+        self.tree.setStyleSheet(f'''
+            QTreeWidget {{
+                background-color: {bg};
+                border: 1.5px solid {border};
+                font-size: 14px;
+                color: {fg};
+                selection-background-color: {sel_bg};
+                selection-color: {sel_fg};
+            }}
+            QTreeWidget::item {{
+                padding: 4px;
+                min-height: 22px;
+            }}
+            QTreeWidget::branch {{
+                padding: 1px;
+            }}
+        ''')
 
 
 if __name__ == '__main__':

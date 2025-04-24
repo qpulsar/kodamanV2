@@ -4,6 +4,20 @@ import json
 MESSAGE_DELIMITER = '\n'
 
 # === Mesaj Olusturucular ===
+
+def make_get_users_message():
+    """
+    Sunucudan aktif kullanıcı listesini istemek için mesaj oluşturur.
+    """
+    return json.dumps({"command": "get_users"}) + MESSAGE_DELIMITER
+
+def make_users_response(users):
+    """
+    Aktif kullanıcı listesini döndüren yanıt mesajı oluşturur.
+    users: Liste[str] (kullanıcı adları)
+    """
+    return json.dumps({"response": "users", "users": users}) + MESSAGE_DELIMITER
+
 def make_get_tree_message():
     return json.dumps({"command": "get_tree"}) + MESSAGE_DELIMITER
 
@@ -19,6 +33,12 @@ def make_update_settings_message(excluded_dirs, excluded_exts):
         "excluded_dirs": excluded_dirs, 
         "excluded_exts": excluded_exts
     }) + MESSAGE_DELIMITER
+
+def make_login_message(name):
+    """
+    Kullanıcı adı ile giriş komutu oluşturur.
+    """
+    return json.dumps({"command": "login", "name": name}) + MESSAGE_DELIMITER
 
 def make_tree_response(data):
     return json.dumps({"response": "tree", "data": data}) + MESSAGE_DELIMITER

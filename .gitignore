@@ -1,0 +1,8 @@
+/build/
+/.venv/
+/.idea/
+/client.log
+/gui.log
+/server.log
+/dist/
+/.idea/

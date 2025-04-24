@@ -29,6 +29,8 @@ BASE_DIR = '/Users/emin/PycharmProjects/Kodaman2/'  # Bu yol GUI ile secilebilir
 BASE_DIR = os.path.normpath(os.path.realpath(os.path.abspath(BASE_DIR)))
 
 running = None
+# Aktif giriş yapan kullanıcıları tutar: addr -> name
+active_users = {}
 
 def handle_client(conn, addr):
     """Client bağlantısını işle"""
@@ -60,7 +62,22 @@ def handle_client(conn, addr):
                     logger.debug(f"Mesaj detayları: {msg}")
                     
                     # Komutları işle
-                    if msg.get("command") == "get_tree":
+                    # Kullanıcı listesini döndür
+                    if msg.get("command") == "get_users":
+                        """
+                        İstemciden aktif kullanıcı listesini isteyen komutu işler.
+                        """
+                        # Sadece aktif kullanıcı adlarını döndür
+                        users = list(active_users.values())
+                        response = protocol.make_users_response(users)
+                        conn.sendall(response.encode("utf-8"))
+                        logger.info(f"Kullanıcı listesi gönderildi: {addr}")
+                    elif msg.get("command") == "login":
+                        name = msg.get("name", "")
+                        active_users[addr] = name
+                        logger.info(f"Kullanıcı giriş yaptı: {name} - {addr}")
+                        # No response needed for login
+                    elif msg.get("command") == "get_tree":
                         # Dosya ağacını gönder
                         tree_data = build_tree(BASE_DIR)
                         response = protocol.make_tree_response(tree_data)
@@ -138,6 +155,10 @@ def handle_client(conn, addr):
     except Exception as e:
         logger.error(f"Beklenmeyen hata: {str(e)} - {addr}")
     finally:
+        # Bağlantı kapanınca kullanıcıyı aktif kullanıcı listesinden sil
+        if addr in active_users:
+            logger.info(f"Kullanıcı listeden silindi: {active_users[addr]} - {addr}")
+            del active_users[addr]
         conn.close()
         logger.info(f"[-] Bağlantı kapatıldı: {addr}")
 
