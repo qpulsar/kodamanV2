@@ -6,8 +6,8 @@ from PyQt5.QtWidgets import (
     QLabel, QLineEdit, QListWidget, QHBoxLayout, QMessageBox, QComboBox, QTabWidget
 )
 
-import server
-from settings_manager import SettingsManager
+from . import server
+from .settings_manager import SettingsManager
 
 
 class ServerControlWindow(QMainWindow):

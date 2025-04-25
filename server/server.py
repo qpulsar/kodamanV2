@@ -6,7 +6,7 @@ import sys
 
 # Modül yolunu ekle
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-from file_browser import build_tree, read_file, is_safe_path, set_excluded_directories, set_excluded_extensions, set_allowed_extensions
+from .file_browser import build_tree, read_file, is_safe_path, set_excluded_directories, set_excluded_extensions, set_allowed_extensions
 from shared import protocol
 
 # Logging ayarları

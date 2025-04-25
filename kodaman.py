@@ -12,7 +12,7 @@ from languages import LANGUAGES
 from client.kodaman_client import FileBrowserGUI
 from server.kodaman_server import ServerControlWindow
 from client.preferences import Preferences
-from shared.lang_manager import LangManager
+from client.lang_manager import LangManager
 
 # Preferences için gerekli import
 sys.path.append(os.path.join(os.path.dirname(__file__), 'client'))

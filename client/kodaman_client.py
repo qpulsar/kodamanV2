@@ -7,13 +7,13 @@ from PyQt5.QtWidgets import QApplication, QMainWindow, QTreeWidget, QTreeWidgetI
 from PyQt5.QtCore import QThread, pyqtSignal, Qt, QTimer
 from PyQt5.QtGui import QIcon, QFont, QColor
 from qt_material import apply_stylesheet, QtStyleTools, list_themes
-from client import ClientConnection
-from css_highlighter import CssHighlighter
-from js_highlighter import JsHighlighter
-from html_higlighter import HtmlHighlighter
-from python_highlighter import PythonHighlighter
-from lang_manager import LangManager
-from preferences import Preferences
+from .client import ClientConnection
+from .css_highlighter import CssHighlighter
+from .js_highlighter import JsHighlighter
+from .html_higlighter import HtmlHighlighter
+from .python_highlighter import PythonHighlighter
+from .lang_manager import LangManager
+from .preferences import Preferences
 
 # Logging ayarları
 logging.basicConfig(

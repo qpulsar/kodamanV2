@@ -8,7 +8,7 @@ a = Analysis(
     datas=[('client', 'client'), ('server', 'server'), ('shared', 'shared'), ('images', 'images'), ('preferences.json', '.'), ('server_settings.json', '.')] + collect_data_files('PyQt5'),
     hiddenimports=collect_submodules('PyQt5') + [
         'client.css_highlighter',
-        'client.html_highlighter',
+        'client.html_higlighter',
         'client.js_highlighter',
         'client.python_highlighter',
     ],
