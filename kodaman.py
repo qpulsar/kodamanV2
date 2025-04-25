@@ -9,10 +9,13 @@ from PyQt5.QtWidgets import (
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QFont, QIcon, QPixmap, QPalette, QColor
 from languages import LANGUAGES
+from client.kodaman_client import FileBrowserGUI
+from server.kodaman_server import ServerControlWindow
+from client.preferences import Preferences
+from shared.lang_manager import LangManager
 
 # Preferences için gerekli import
 sys.path.append(os.path.join(os.path.dirname(__file__), 'client'))
-from client.preferences import Preferences
 
 # Logging ayarları
 logging.basicConfig(
@@ -108,6 +111,17 @@ QComboBox QAbstractItemView {
 }
 """
 
+def resource_path(relative_path):
+    """ Get absolute path to resource, works for dev and for PyInstaller """
+    try:
+        # PyInstaller creates a temp folder and stores path in _MEIPASS
+        base_path = sys._MEIPASS
+    except Exception:
+        # Not running in PyInstaller bundle, use the script's directory
+        base_path = os.path.dirname(os.path.abspath(__file__))
+
+    return os.path.join(base_path, relative_path)
+
 class KodamanLauncher(QMainWindow):
     def __init__(self):
         super().__init__()
@@ -121,7 +135,7 @@ class KodamanLauncher(QMainWindow):
         
         # Arka plan resmi için
         self.background = QLabel(self)
-        background_pixmap = QPixmap('images/splash.png')
+        background_pixmap = QPixmap(resource_path('images/splash.png'))
         self.background.setPixmap(background_pixmap.scaled(600, 400, Qt.KeepAspectRatioByExpanding))
         self.background.setGeometry(0, 0, 600, 400)
         self.background.lower()  # Arka planı en alta al
@@ -215,7 +229,11 @@ class KodamanLauncher(QMainWindow):
         # Seçimi hatırla checkbox'ı
         self.remember_choice = QCheckBox(self.texts['remember_choice'])
         self.remember_choice.setChecked(self.preferences.get('remember_choice'))
-        content_layout.addWidget(self.remember_choice, alignment=Qt.AlignCenter)
+        self.remember_choice.stateChanged.connect(self.update_remember_choice)
+        content_layout.addWidget(self.remember_choice)
+        
+        # Ana uygulama penceresini tutmak için
+        self.main_window = None
         
         # Başlat butonu
         self.start_button = QPushButton(self.texts['start'])
@@ -266,21 +284,24 @@ class KodamanLauncher(QMainWindow):
         if remember_choice:
             self.preferences.set('app.type', app_type)
         
-        # Uygulamayı kapat
-        self.close()
-        
         # Seçilen uygulamayı başlat
         if app_type == 'server':
             logger.info("Sunucu başlatılıyor...")
-            server_path = os.path.join(os.path.dirname(__file__), 'server', 'kodaman_server.py')
-            os.system(f'python "{server_path}"')
+            self.main_window = ServerControlWindow()
+            self.main_window.show()
         else:
             logger.info("İstemci başlatılıyor...")
-            client_path = os.path.join(os.path.dirname(__file__), 'client', 'kodaman_client.py')
-            os.system(f'python "{client_path}"')
+            self.main_window = FileBrowserGUI() 
+            self.main_window.show()
+            
+        # Başlatıcıyı gizle (veya kapat)
+        self.hide() # self.close() yerine hide() kullanmak daha güvenli olabilir
 
-if __name__ == '__main__':
+def main():
     app = QApplication(sys.argv)
     window = KodamanLauncher()
     window.show()
     sys.exit(app.exec_())
+
+if __name__ == '__main__':
+    main()
