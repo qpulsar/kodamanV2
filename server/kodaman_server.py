@@ -12,6 +12,7 @@ from .settings_manager import SettingsManager
 
 class ServerControlWindow(QMainWindow):
     def __init__(self):
+        print('[LOG] ServerControlWindow başlatılıyor')
         super().__init__()
         self.setWindowTitle("📡 Sunucu Kontrol Paneli")
         self.setFixedSize(600, 500)
@@ -380,28 +381,39 @@ class ServerControlWindow(QMainWindow):
         self.settings_manager.set_setting("allowed_extensions", self.allowed_extensions)
 
     def toggle_server(self):
+        print('[LOG] toggle_server çağrıldı')
         if not self.server_running:
+            print(f'[LOG] Sunucu başlatılıyor. base_dir: {self.base_dir}')
             if not self.base_dir or not os.path.isdir(self.base_dir):
+                print('[ERROR] Geçersiz base_dir!')
                 QMessageBox.warning(self, "Uyarı", "Lütfen geçerli bir klasör seçin.")
                 return
-
             server.BASE_DIR = self.base_dir
-
-            # Uzantı ve klasör ayarlarını file_browser modülüne aktar
-            from file_browser import set_allowed_extensions, set_excluded_directories, set_excluded_extensions
-
-            # Ayarları güncelle
-            set_allowed_extensions(self.allowed_extensions)
-            set_excluded_directories(self.excluded_directories)
-            set_excluded_extensions(self.excluded_extensions)
-
-            self.server_thread = threading.Thread(target=server.start_server, daemon=True)
-            self.server_thread.start()
-
+            try:
+                # Uzantı ve klasör ayarlarını file_browser modülüne aktar
+                from .file_browser import set_allowed_extensions, set_excluded_directories, set_excluded_extensions
+                print(f'[LOG] set_allowed_extensions({self.allowed_extensions})')
+                print(f'[LOG] set_excluded_directories({self.excluded_directories})')
+                print(f'[LOG] set_excluded_extensions({self.excluded_extensions})')
+                set_allowed_extensions(self.allowed_extensions)
+                set_excluded_directories(self.excluded_directories)
+                set_excluded_extensions(self.excluded_extensions)
+                print('[LOG] Sunucu thread oluşturuluyor')
+                self.server_thread = threading.Thread(target=server.start_server, daemon=True)
+                self.server_thread.start()
+                print('[LOG] Sunucu thread başlatıldı')
+            except Exception as e:
+                print(f'[ERROR] toggle_server başlatma sırasında hata: {e}')
+                QMessageBox.critical(self, "Sunucu Hatası", f"Sunucu başlatılırken hata oluştu: {e}")
+                return
             self.server_running = True
             self.start_btn.setText("Sunucuyu Durdur")
         else:
-            server.stop_server()  # Sunucu tarafında uygulanmalı
+            print('[LOG] Sunucu durduruluyor')
+            try:
+                server.stop_server()  # Sunucu tarafında uygulanmalı
+            except Exception as e:
+                print(f'[ERROR] stop_server sırasında hata: {e}')
             self.server_running = False
             self.start_btn.setText("Sunucuyu Başlat")
 
@@ -438,7 +450,9 @@ class ServerControlWindow(QMainWindow):
 
 
 if __name__ == '__main__':
+    print('[LOG] Uygulama başlatılıyor')
     app = QApplication(sys.argv)
     win = ServerControlWindow()
     win.show()
+    print('[LOG] Ana pencere gösterildi')
     sys.exit(app.exec_())

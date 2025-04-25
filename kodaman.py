@@ -250,6 +250,11 @@ class KodamanLauncher(QMainWindow):
         content_widget.raise_()  # İçerik widget'ını arka planın üzerine al
         
         logger.info("Kodaman Başlatıcı arayüzü hazırlandı")
+
+    def update_remember_choice(self):
+        """Seçimi hatırla kutusu değiştiğinde tercihi kaydet"""
+        remember = self.remember_choice.isChecked()
+        self.preferences.set('remember_choice', remember)
     
     def change_language(self, index):
         # Yeni dili kaydet
